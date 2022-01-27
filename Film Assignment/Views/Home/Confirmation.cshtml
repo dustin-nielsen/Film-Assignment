@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Movie Submitted";
+}
+
+@model Film_Assignment.Models.MovieResponse
+
+@if (Model.Category != null && Model.Title != null && Model.Year != null && Model.Director != null && Model.Rating != null)
+{
+    <h2>@Model.Title received.</h2>
+}
+else
+{
+    <h2>Movie not included.</h2>
+    <h2>Be sure to include the movie Category, Title, Year, Director, and Rating</h2>
+}
+
