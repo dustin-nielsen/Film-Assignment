@@ -1,5 +1,6 @@
 ﻿using Film_Assignment.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -11,13 +12,11 @@ namespace Film_Assignment.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private MovieSubmissionContext blahContext { get; set; }
+        private MovieSubmissionContext daContext { get; set; }
 
-        public HomeController(ILogger<HomeController> logger, MovieSubmissionContext x)
+        public HomeController(MovieSubmissionContext x)
         {
-            _logger = logger;
-            blahContext = x;
+            daContext = x;
         }
 
         public IActionResult Index()
@@ -33,31 +32,74 @@ namespace Film_Assignment.Controllers
         [HttpGet]
         public IActionResult MovieSubmission()
         {
+            ViewBag.Categories = daContext.Categories.ToList();
+
             return View();
         }
 
         [HttpPost]
         public IActionResult MovieSubmission (MovieResponse mr)
         {
-            if (ModelState.IsValid == true)
+            if (ModelState.IsValid)
             {
-                blahContext.Add(mr);
-                blahContext.SaveChanges();
+                daContext.Add(mr);
+                daContext.SaveChanges();
+
+                return View("Confirmation", mr);
             }
-                
+            else //If Invalid
+            {
+                ViewBag.Categories = daContext.Categories.ToList();
 
-            return View("Confirmation", mr);
+                return View();
+            }
+
         }
 
-        public IActionResult Privacy()
+        public IActionResult MovieList ()
         {
-            return View();
+            var applications = daContext.Responses
+                .Include(x => x.Category)
+                .ToList();
+
+            return View(applications);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpGet]
+        public IActionResult Edit(int applicationid)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            ViewBag.Categories = daContext.Categories.ToList();
+
+            var application = daContext.Responses.Single(x => x.ApplicationId == applicationid);
+
+            return View("MovieSubmission", application);
         }
+
+        [HttpPost]
+        public IActionResult Edit(MovieResponse blah)
+        {
+            daContext.Update(blah);
+            daContext.SaveChanges();
+
+            return RedirectToAction("MovieList");
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int applicationid)
+        { 
+            var application = daContext.Responses.Single(x => x.ApplicationId == applicationid);
+
+            return View(application);
+        }
+
+        [HttpPost]
+        public IActionResult Delete (MovieResponse mr)
+        {
+            daContext.Responses.Remove(mr);
+            daContext.SaveChanges();
+
+            return RedirectToAction("MovieList");
+        }
+
     }
 }

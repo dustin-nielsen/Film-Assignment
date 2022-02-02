@@ -15,15 +15,70 @@ namespace Film_Assignment.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.22");
 
+            modelBuilder.Entity("Film_Assignment.Models.Category", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1,
+                            CategoryName = "Action/Adventure"
+                        },
+                        new
+                        {
+                            CategoryId = 2,
+                            CategoryName = "Comedy"
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            CategoryName = "Drama"
+                        },
+                        new
+                        {
+                            CategoryId = 4,
+                            CategoryName = "Family"
+                        },
+                        new
+                        {
+                            CategoryId = 5,
+                            CategoryName = "Horror/Suspense"
+                        },
+                        new
+                        {
+                            CategoryId = 6,
+                            CategoryName = "Miscellaneous"
+                        },
+                        new
+                        {
+                            CategoryId = 7,
+                            CategoryName = "Television"
+                        },
+                        new
+                        {
+                            CategoryId = 8,
+                            CategoryName = "VHS"
+                        });
+                });
+
             modelBuilder.Entity("Film_Assignment.Models.MovieResponse", b =>
                 {
                     b.Property<int>("ApplicationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Director")
                         .IsRequired()
@@ -52,13 +107,15 @@ namespace Film_Assignment.Migrations
 
                     b.HasKey("ApplicationId");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("Responses");
 
                     b.HasData(
                         new
                         {
                             ApplicationId = 1,
-                            Category = "Musical/Adventure/Comedy",
+                            CategoryId = 4,
                             Director = "Nathan Greno",
                             Edited = false,
                             LentTo = "",
@@ -70,7 +127,7 @@ namespace Film_Assignment.Migrations
                         new
                         {
                             ApplicationId = 2,
-                            Category = "Superhero",
+                            CategoryId = 1,
                             Director = "Bob Persichetti",
                             Edited = false,
                             LentTo = "",
@@ -82,7 +139,7 @@ namespace Film_Assignment.Migrations
                         new
                         {
                             ApplicationId = 3,
-                            Category = "Comedy",
+                            CategoryId = 2,
                             Director = "Jared Hess",
                             Edited = false,
                             LentTo = "Tanner",
@@ -91,6 +148,15 @@ namespace Film_Assignment.Migrations
                             Title = "Napoleon Dynamite",
                             Year = 2004
                         });
+                });
+
+            modelBuilder.Entity("Film_Assignment.Models.MovieResponse", b =>
+                {
+                    b.HasOne("Film_Assignment.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

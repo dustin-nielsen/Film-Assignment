@@ -12,9 +12,6 @@ namespace Film_Assignment.Models
         [Required]
         public int ApplicationId { get; set; }
 
-        [Required(ErrorMessage = "Category is required")]
-        public string Category { get; set; }
-
         [Required(ErrorMessage = "Title is required")]
         public string Title { get; set; }
 
@@ -31,7 +28,14 @@ namespace Film_Assignment.Models
 
         public string LentTo { get; set; }
 
-        [StringLength(25, ErrorMessage = "Note must be less than 25 characters")]
+        [StringLength(25)]
         public string Notes { get; set; }
+
+
+        //Build Foreign Key Relationship
+        [Required(ErrorMessage = "Category is required")]
+        public int CategoryId { get; set; }
+
+        public Category Category { get; set; }
     }
 }
